@@ -1,0 +1,248 @@
+options(digits=5, width=120)
+
+## Working directory
+#getwd() # Shows the working directory (wd)
+#setwd(choose.dir()) # Select the working directory interactively
+#setwd("C:/myfolder/data") # Changes the wd
+#setwd("H:\\myfolder\\data") # Changes the wd
+
+## Creating directories/downloading from the internet
+#dir() # Lists files in the working directory
+#dir.create("C:/myfolder") # Creates folder ‘test’ in drive ‘C:’
+#setwd("C:/myfolder") # Changes the working directory to “C:/myfolder”
+
+## Download file ‘***.xls’ from the internet.
+#download.file("http://***.***/****/***.xls", "C:/Myfolder/****..xls", method="auto",
+#              quiet=FALSE, mode = "wb", cacheOK = TRUE)
+
+## Installing/loading packages/user???written programs
+## install.packages("ABC") # This will install the package ???-ABC--. A window will pop-up, select a
+## mirror site to download from (the closest to where you are) and click ok.
+## library(ABC) # Load the package ???-ABC-??? to your workspace
+## Install the following packages:
+#install.packages("foreign")
+#library(foreign)
+#install.packages("car")
+#install.packages("Hmisc")
+#install.packages("reshape")
+
+##  http://cran.r-project.org/web/views/  # Full list of packages by subject area
+
+## Keeping track of your work
+## Save the commands used during the session
+#savehistory(file="mylog.Rhistory")
+
+## Load the commands used in a previous session
+#loadhistory(file="mylog.Rhistory")
+
+## Display the last 25 commands
+#history()
+
+##  You can read mylog.Rhistory with any word processor. Notice that the file has to have the extension
+##  *.Rhistory
+
+## Getting help
+#?plot # Get help for an object, in this case for the ???-plot??? function. You can also type: help(plot)
+#??regression # Search the help pages for anything that has the word "regression". You can also type:
+#help.search("regression")
+#apropos("기말고사") # Search the word "기말고사" in the objects available in the current R session.
+#help(package=car) # View documentation in package ‘car’. You can also type: library(help="car“)
+#help(DataABC) # Access codebook for a dataset called ‘DataABC’ in the package ABC
+#args(log) # Description of the command.
+
+
+## Data from *.csv (copy and paste)
+## Select the table from the excel file, copy, go to the R Console and type:
+## EXCEL화일을 열어놓은 상태에서
+#mydata <- read.table("clipboard", header=TRUE, sep="\t")
+
+## Data from *.csv (interactively)
+#mydata <- read.csv(file.choose(), header = TRUE)
+
+## Data from *.csv
+#mydata <- read.csv("C:\myfolder\****.csv", header=TRUE)
+mydata <- read.csv("2주_기술통계 예제_성적처리_자료.csv", header=TRUE) # Present Dir
+#mydata <- read.csv("http://***.***./***/***/****.csv", header=TRUE)
+
+## Data to *.csv
+#write.table(mydata, file = "****.csv", sep = ",")
+
+## Data from *.txt (space , tab, comma???separated)
+## If you have spaces and missing data is coded as ‘-9’, type:
+#mydata <- read.table("C:/myfolder/****.txt", header=TRUE, sep="\t", na.strings = "-9")
+
+## Data to *.txt (space , tab, comma???separated)
+#write.table(mydata, file = "****.txt", sep = "\t")
+
+## Data from R
+#load("mydata.RData")
+#load("mydata.rda")  #  Add path to data if necessary 
+
+## Data to R
+#save.image("mywork.RData") # Saving all objects to file *.RData 
+#save(object1, object2, file=“mywork.rda")  # Saving selected objects
+
+
+##################################################################
+#중간고사 코딩
+
+covid<- read.csv("C:/Users/car99/OneDrive/문서/06_COVID백신접종_2021_a.csv", header=TRUE)
+
+#1번
+summary(covid)
+
+#2번
+str(covid)
+head(covid)
+
+#3번
+library(ggplot2)
+ggplot(data=covid, aes(x=Continent, y=TV)) + geom_bar(stat="identity")
+
+
+#4번
+
+library(plyr)
+datas <- ddply(covid, .(Continent), summarise, MeanRat=round(mean(Rat), 1))
+ggplot(data=datas, aes(x=Continent, y=MeanRat)) + geom_bar(stat="identity")
+
+
+#5번
+library(ggplot2)
+ggplot(data=covid, aes(x=Continent, y=ND)) + geom_bar(stat="identity")
+
+
+#6번
+datas_1 <- ddply(covid, .(Continent), summarise, MeanND=ND/Pop)
+datas_2 <- ddply(datas_1, .(Continent), summarise, MeanNDs=100000* mean(MeanND))
+ggplot(data=datas_2, aes(x=Continent, y=MeanNDs)) + geom_bar(stat="identity")
+
+#7번
+library(ggplot2)
+ggplot(data=covid, aes(x=Continent, y=PV)) + geom_bar(stat="identity")
+ggplot(data=covid, aes(x=Continent, y=PFV)) + geom_bar(stat="identity")
+
+#8번
+qplot(Rat, ND/Pop, data = covid, colour = Continent , size = ND/Pop) +
+   ylim(0, 0.0001)
+
+#9번
+qplot(Rat, ND/Pop, data = covid, colour = Continent , size = ND/Pop) +
+   ylim(0, 0.000005)
+
+#10번
+qplot(MeanRat, datas_2$MeanNDs, data=datas, colour = Continent , size = datas_2$MeanNDs)
+
+
+
+
+##########################################################################
+summary(mydata) # Provides basic descriptive statistics and frequencies.
+#edit(mydata) # Open data editor
+str(mydata) # Provides the structure of the dataset
+names(mydata) # Lists variables in the dataset
+head(mydata) # First 6 rows of dataset
+head(mydata, n=10)# First 10 rows of dataset
+head(mydata, n= -1088) # All rows but the last 1088
+tail(mydata) # Last 6 rows
+tail(mydata, n=10) # Last 10 rows
+tail(mydata, n= -1090) # All rows but the first 1090
+mydata[1:10, ] # First 10 rows
+mydata[1:10,1:3] # First 10 rows of data of the first 3 variables
+
+## Exploring the workspace
+#objects()       # Lists the objects in the workspace
+#ls()            # Same as objects()
+#remove()        # Remove objects from the workspace
+#rm(list=ls())   #clearing memory space
+#detach(package:ABC)  # Detached packages when no longer need them
+#search()        # Shows the loaded packages
+#library()       # Shows the installed packages
+#dir()           # show files in the working directory
+
+
+##################################################
+## Descriptive Statistics
+
+mean(mydata[,3])
+mean(mydata$중간고사)
+
+with(mydata, mean(중간고사))
+
+median(mydata$중간고사)    # 중앙값
+var(mydata$중간고사)       # 분산
+sd(mydata$중간고사)        # 표준편차
+max(mydata$중간고사)       # 최댓값
+min(mydata$중간고사)       # 최솟값
+range(mydata$중간고사)     # 범위
+quantile(mydata$중간고사)  # 백분위수 25%
+quantile(mydata$중간고사, c(.3,.6,.9)) # 백dnl이수 with Customized quantiles
+fivenum(mydata$중간고사)   # Boxplot elements. From help: "Returns Tukey's five number summary 
+                           # (minimum, lower-hinge, median, upper-hinge, maximum) 
+                           # for the input data ~ boxplot"
+length(mydata$중간고사)    # Num of observations when a variable is specify
+length(mydata)             # Number of variables when a dataset is specify
+which.max(mydata$중간고사) # 조건 일치 값 출력 (자료중 지정 변수의 최댓값)
+which.min(mydata$중간고사) # 조건 일치 값 출력 (자료중 지정 변수의 최솟값)
+
+## Mode by frequencies
+table(mydata$학점)
+max(table(mydata$학점))
+names(sort(-table(mydata$학점)))[1]
+names(sort(-table(mydata$학점)))[2]
+
+
+#################################################
+## Histograms
+hist(mydata$중간고사)
+
+hist(mydata$중간고사, col="green")
+
+with(mydata, hist(중간고사)) # Histogram of 중간고사 
+
+with(mydata, hist(중간고사, breaks="FD", col="green"))
+box()
+
+hist(mydata$중간고사, breaks="FD")
+
+## Conditional histograms
+par(mfrow=c(1, 2))
+hist(mydata$중간고사[mydata$학점=="A+"], breaks="FD", main="A+", xlab="중간고사",col="green")
+hist(mydata$중간고사[mydata$학점=="B+"], breaks="FD", main="B+", xlab="중간고사", col="green")
+
+## Braces indicate a compound command allowing several commands with 'with' command
+par(mfrow=c(1, 1))
+with(mydata, {
+   hist(중간고사, breaks="FD", freq=FALSE, col="green")
+   lines(density(중간고사), lwd=2)
+   lines(density(중간고사, adjust=0.5),lwd=1)
+   rug(중간고사)
+  })
+
+## Histograms overlaid
+hist(mydata$중간고사, breaks="FD", col="green")
+
+hist(mydata$중간고사[mydata$학점=="B+"], breaks="FD", col="gray", add=TRUE)
+legend("topright", c("A+","B+"), fill=c("green","gray"))
+
+강좌번호학점 <- table(mydata$강좌번호,mydata$학점)
+강좌번호학점
+
+## Scatterplots 
+## Useful to 1) study the mean and variance functions in the regression of y on x
+##           2) to identify outliers and leverage points.
+
+## plot(x,y)
+par(mfrow=c(1, 2))
+plot(mydata$중간고사) # Index plot
+plot(mydata$기말고사, mydata$중간고사)
+
+par(mfrow=c(1, 1))
+plot(mydata$기말고사, mydata$중간고사, main="기말고사/중간고사", xlab="기말고사", ylab="중간고사", col="red")
+abline(lm(mydata$중간고사~mydata$기말고사), col="blue")
+lines(lowess(mydata$기말고사, mydata$중간고사), col="black") #  locally-weighted polynomial regression line (x,y)
+#identify(mydata$기말고사, mydata$중간고사, row.names(mydata))
+
+## Rule on span for lowess, big sample smaller (~0.3), small sample bigger (~0.7)
+library(car)
+scatterplot(data=covid)

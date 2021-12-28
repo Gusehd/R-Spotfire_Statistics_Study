@@ -1,0 +1,362 @@
+#R의 기초 
+
+# 1. 자료생성 및 표작성
+Drink = c(3, 4, 1, 1, 3, 4, 3, 3, 1, 3, 2, 1, 2, 1, 2, 3, 2, 3, 1, 1, 1, 1, 4, 3, 1)
+table(Drink)                  # 자료 Drink의 도수분포표
+prop.table(table(Drink))      # 자료 Drink의 상대도수분포표
+table(Drink)/length(Drink)       # 자료 Drink의 상대도수분포표
+
+
+# 2. 그래프를 이용한 자료의 요약
+# 2.1. 막대 그래프(Bar Charts)
+barplot(Drink)  
+barplot(table(Drink)) 	                 #  일반적인 막대 그래프 : 막대의 높이는 도수이다.
+
+barplot(prop.table(table(Drink)))        #  막대의 높이를 상대도수로 한다.
+barplot(table(Drink)/length(Drink))      #  막대의 높이를 상대도수로 한다.
+
+
+# 2.2. 원형 그래프(Pie Charts) 
+Drink.counts = table(Drink)              #  변수 drink의 요약자료 저장
+Drink.counts                             # Drink.counts 자료 확인
+pie(Drink.counts)
+
+names(Drink.counts) = c("A","B","C","D")  # 각 범주에 이름 부여
+pie(Drink.counts)                        # 이름으로 표시되는 원형그래프 작성
+
+pie(Drink.counts, col=c("blue","pink","yellow","green"))	   # 색 지정
+
+
+# 2.3. 줄기-잎 그림
+stem(islands)
+stem(log10(islands))
+stem(log10(islands), scale=1)
+
+
+#2.4. 히스토그램(Histograms)
+X <- faithful$waiting
+hist(X) 				            # 도수로 나타낼 때
+hist(X, probability=TRUE)     # 상대도수(or 확률)로 나타낼 때
+
+hist(X, probability=TRUE) 
+rug(X)       
+
+hist(X, probability=TRUE) 
+rug(jitter(X))
+
+hist(X, probability=TRUE, breaks=6) 	   # 6개의 분할을 사용 
+hist(X,breaks=c(min(X), 50, 70, 80, max(X)))  # 분할을 지정할 수도 있다.
+
+
+
+# 3. 자료의 수치적 요약 
+Sals = c(12, .4, 5, 2, 50, 8, 3, 1, 4, 0.25) # “.4”는 “0.4”로 인식한다.
+mean(Sals) 		                 # 평균
+var(Sals)                       # 분산(표본 분산을 의미한다)
+sd(Sals) 	             	     # 표준편차(표본표준편차)
+median(Sals)     		           # 중앙값
+fivenum(Sals)                   # “fivenum”함수 이용 자료 요약
+summary(Sals)                   # “summary”함수 이용 자료 요약
+
+Data=c(10, 17, 18, 25, 28, 28)
+summary(Data)
+quantile(Data, .25)
+quantile(Data, c(.25, .75)) 	  # 한 번에 두 값을 출력
+
+sort(Sals)                      # 크기 순으로 정렬
+fivenum(Sals)                   # “1”은 3번째, “8”은 8번째 자료이다.
+summary(Sals)   
+
+mean(Sals, trim=1/10)   	# 아래/윗부분을 모두 1/10씩 버린 후 나머지들의 평균 
+mean(Sals, trim=2/10)	   # 아래/윗부분을 모두 2/10씩 버린 후 나머지들의 평균 
+IQR(Sals)
+mad(Sals)
+median(abs(Sals - median(Sals))) 	             # abs()은 절대값 함수이다.
+median(abs(Sals - median(Sals))) * 1.4826        # 중앙평균차의 공식
+
+
+
+#4. 복합적 요약 
+#4.1 상자그림(Boxplot 또는 상자수염그림)
+
+#install.packages(UsingR)
+library("UsingR") 	# package “UsingR”을 사용할 준비 한다.
+
+data(movies) 	   	# “movies"이름을 가진 자료를 사용할 준비 한다.
+names(movies)	      # “movies"에 사용된 변수이름을 알아본다.
+attach(movies)		   # “movies"의 자료를 불러들일 때
+boxplot(current, main="이번주 수입", horizontal=TRUE)
+boxplot(gross, main="총 수입",horizontal=TRUE)
+detach(movies) 	   # “movies” 자료를 더 이상 취급하지 않을 때
+
+# “library”와 “data”를 이용하여 자료를 읽는 방법
+library(stats) 		# 패키지 "stats"를 지정한다. 
+data(lynx) 		      # 자료명 "lynx"를 지정한다.
+summary(lynx)	    	# "lynx"의 자료에 대한 요약
+
+
+#4.2. 히스토그램과 상자그림을 동시에 그리기 
+set.seed(1)
+X = rnorm(100)                     # 표준정규분포를 따르는 난수 100개 추출
+simple.hist.and.boxplot(X)         # X의 히스토그램 및 상자그림을 동시에 나타낸다.
+
+
+#4.3. 돗수다각형(Frequency Polygon)
+set.seed(1)
+X= rnorm(100)  
+temp = hist(X)                      # store the results
+lines(c(min(temp$breaks), temp$mids, max(temp$breaks)), c(0, temp$counts, 0), type="l")
+simple.freqpoly(X)   # 위의 결과와 동일함
+
+
+#4.4. 확률밀도
+data(faithful)
+attach(faithful) 		                  # 자료를 준비시킨다.
+hist(eruptions, breaks = "Sturges", prob=T) 	     # 상대도수의 히스토그램을 작성한다.
+lines(density(eruptions)) 	            # 밀도함수 곡선을 그린다.
+
+hist(eruptions, prob=T) 	    
+hist(eruptions, 10, prob=T) 
+hist(eruptions, 20, prob=T) 
+hist(eruptions, 30, prob=T) 
+hist(eruptions, 8, prob=T) 
+hist(eruptions, 5, prob=T) 
+hist(eruptions, 4, prob=T) 
+hist(eruptions, 3, prob=T) 
+hist(eruptions, 2, prob=T) 
+
+nclass.Sturges(eruptions)
+nclass.scott(eruptions)
+nclass.FD(eruptions)
+
+hist(eruptions, 15, prob=T)	
+lines(density(eruptions, bw="SJ"), col='red')   # “SJ” 방법으로 띠너비 결정 
+
+par(mfrow=c(1,3))　　　　　　      　           # 그래프 3개를 한 행에 그릴 때 사용
+hist(eruptions,15,prob=T, main="bw=0.01")
+lines(density(eruptions, bw=0.01))              # 띠너비를 0.01로 할 때, 
+hist(eruptions, 15, prob=T, main="bw=1")
+lines(density(eruptions, bw=1))                 # 띠너비를 1로 할 때, 
+hist(eruptions, 15, prob=T, main="bw=0.1")
+lines(density(eruptions, bw=0.1))               # 띠너비를 0.1로 할 때, 
+par(mfrow=c(1,1))
+
+require(graphics)
+plot(density(eruptions), xlim=c(0,7), ylim=c(0,0.7))
+rug(eruptions)
+lines(density(eruptions, bw = "nrd"), col = 2)
+lines(density(eruptions, bw = "ucv"), col = 3)
+lines(density(eruptions, bw = "bcv"), col = 4)
+lines(density(eruptions, bw = "SJ-ste"), col = 5)
+lines(density(eruptions, bw = "SJ-dpi"), col = 6)
+legend(5.5, 0.7, legend = c("nrd0", "nrd", "ucv", "bcv", "SJ-ste", "SJ-dpi"), 
+       col = 1:6, lty = 1)
+
+
+
+#5. 다변량 자료의 요약 방법들
+#5.1 표를 이용한 자료의 요약
+
+Df <- data.frame( Sex = c("M","M","F","F","F","M","M","M","M","F"),
+     Grade = c(1,2,3,1,2,3,1,2,3,1),
+     Blood = c("A","O","B","AB","B","B","AB","A","A","O"),
+     IQ = c(145,147,135,150,155,135,127,138,140,133),
+     Hair = c("Black","Brown","Black","Blond","Red","Brown","Red","Brown","Black","Blond"),
+     Eye = c("Brown","Blue","Hazel","Green","Brown","Blue","Hazel","Green","Brown","Blue"))
+Df
+str(Df)
+
+table(Df$Grade)
+table(Df$Sex, Df$Grade) 
+table(Df$Hair, Df$Eye)
+table(Df$Hair, Df$Eye, dnn=c("Hair","Eye"))
+xtabs( ~ Df$Hair + Df$Eye, data=Df)
+margin.table(table(Df$Hair, Df$Eye, dnn=c("Hair","Eye")),1)
+margin.table(xtabs( ~ Df$Hair + Df$Eye, data=Df),1)
+margin.table(xtabs( ~ Df$Hair + Df$Eye, data=Df),2)
+margin.table(xtabs( ~ Df$Hair + Df$Eye, data=Df))
+addmargins(table(Df$Hair, Df$Eye))
+
+options(digits=3)                       # 기본은 7로 되어 있다.
+prop.table(xtabs( ~ Df$Hair + Df$Eye, data=Df),1)
+addmargins(prop.table(xtabs( ~ Df$Hair + Df$Eye, data=Df),1),2)
+
+prop.table(xtabs( ~ Df$Hair + Df$Eye, data=Df),2)
+addmargins(prop.table(xtabs( ~ Df$Hair + Df$Eye, data=Df),2),1)
+
+prop.table(xtabs( ~ Df$Hair + Df$Eye, data=Df))
+addmargins(prop.table(xtabs( ~ Df$Hair + Df$Eye, data=Df)))
+
+
+# 배열 자료의 표만들기 및 예제 함수 ftable() 추가
+Aye <- sample(c("Yes", "Si", "Oui"), 177, replace = TRUE)
+Bee <- sample(c("Hum", "Buzz"), 177, replace = TRUE)
+Sea <- sample(c("White", "Black", "Red", "Dead"), 177, replace = TRUE)
+A <- table(Aye, Bee, Sea)
+addmargins(A)
+
+ftable(A)
+ftable(addmargins(A))
+ftable(addmargins(A,1))
+ftable(addmargins(A,2))
+ftable(addmargins(A,3))
+ftable(addmargins(A, c(1, 3)))
+
+## Zero.Printing table+margins:
+set.seed(1)
+x <- sample( 1:7, 20, replace = TRUE)
+y <- sample( 1:7, 20, replace = TRUE)
+tx <- addmargins( table(x, y) )
+print(tx, zero.print = ".")
+
+
+
+#5.2. 그래프를 이용한 자료의 요약
+#5.2.1. 히스토그램: (함수 hist()사용)
+par(mfrow = c(1, 2))
+hist(airquality$Ozone, main="오존농도/도수")
+hist(airquality$Ozone, main="오존농도/밀도", probability=TRUE)
+par(mfrow = c(1, 1))
+
+
+#5.2.2. 상자그림: (함수 bolplot()사용)
+library("UsingR")
+par(mfrow = c(1, 2))
+data(home) 
+names(home)
+boxplot(data.frame(home))
+boxplot(data.frame(scale(home)))   # ”scale”함수 이용,  표준화 진행한 후 상자그림.
+
+
+#5.2.3. 산점도: (함수 plot())사용)
+data(airquality)
+attach(airquality)
+par(mfrow = c(1, 1))
+plot(Wind, Ozone)
+with(airquality, plot(Wind, Ozone))
+
+# 제목 및 범례
+with(home, plot(scale(old),scale(new), main="제목: 주택 가격 비교",
+ xlab="x축이름:과거(표준화)", ylab="y축이름:현재(표준화)",
+ xlim=c(-2,2), ylim=c(-2,2)))                # 축이름 및 축의 범위 설정
+legend("bottomright", "우측하단");      
+legend("bottom", "중앙하단")
+legend("bottomleft", "좌측하단")
+legend("topright", "우측상단")
+legend("top", "중앙상단")
+legend("topleft", "좌측상단")
+legend("right", "우측중앙")
+legend("left", "죄측중앙")
+legend("center", "중앙")
+legend(0.5,1.3, "좌표값  (0.5,1.3)")
+
+
+# (1) 그림 자체에 관련된 파라미터
+with(airquality, plot(Wind, Ozone, pch=10, lty=1, lwd=2, type="b", col="blue", cex=1.5))
+
+
+# (2) 그림 주변과 관련된 파리미터
+par(mfrow=c(2,2), mar=c(2.5,2.5,2.5,2.5))
+with(airquality, plot(Wind, Ozone, las=0))
+with(airquality, plot(Wind, Ozone, las=1))
+with(airquality, plot(Wind, Ozone, las=2))
+with(airquality, plot(Wind, Ozone, las=3))
+
+
+# (3) 그림을 보조하는 명령어들 (a) text(그래프내 문자 추가)
+par(mfrow=c(1,1))
+with(home, plot(home, cex=1.5))
+text(home, pos = 4)
+
+# (3) 그림을 보조하는 명령어들 (b) identify(그래프내 자료 정보 추가)
+with(home, plot(home, cex=1.5))
+identify(home)
+
+# (4) 그림 추가  (a) points
+data(home)
+plot(home, pch=1, cex=2)
+points(home, pch=20, cex=1)
+
+# (4) 그림 추가   b) lines
+x = seq(-pi, 3.14, 0.1)
+y = cos(x)
+plot(x,y, pch=1, cex=1.5)
+lines(x,y, lty=1, lwd=2)
+
+# (4) 그림 추가   (c) abline
+with(home, plot(home, cex=1.5))
+abline(a=-20000, b=6.9, col="red")
+
+# (4) 그림 추가   (d) curve
+x = seq(-pi, pi, 0.1)
+y = sin(x)
+plot(x,y, pch=1, cex=1.5)
+curve(cos, -3.14, 3.14, add=TRUE, lty=2, lwd=2)
+
+# (4) 그림 추가   (e) polygon
+n <- 3
+x <- c(0:n, n:0)
+y <- c(c(0, rnorm(n)), c(0, rnorm(n)))
+plot   (x, y, type = "p")
+polygon(x, y, border = "red")
+text(x,y, pos=4, cex=1.5)
+
+
+# 행렬 자료의 산점도
+x <- seq(-2, 2, 0.01)
+y <- matrix( c(cosh(x),sinh(x),tanh(x)),ncol=3)
+matplot(x,y, main="쌍곡선 함수(cosh, sinh, tanh)", type='l', 
+lwd=c(3,3,5),col=c("black", "blue", "red"))
+abline(h=0, v=0)
+
+# Scatterplot matrix#
+set.seed(1)
+# Make some noisily increasing data
+Df <- data.frame(xvar = 1:20 + rnorm(20,sd=3),
+                 yvar = 1:20 + rnorm(20,sd=3),
+                 zvar = 1:20 + rnorm(20,sd=3))
+Df
+# A scatterplot matrix
+plot(Df[,1:3])
+
+#install.packages("car")
+library(car)
+scatterplotMatrix(Df[,1:3])
+scatterplotMatrix(Df[,1:3],  smooth=FALSE )
+
+
+
+#6.Lattice 
+
+#xyplot
+library(lattice)
+library(MASS)
+histogram( ~ Price | Cylinders, data=Cars93)
+
+#bwplot
+bwplot( ~ Price | Cylinders, data=Cars93)
+
+# xyplot
+with(Cars93, xyplot( MPG.highway ~ Fuel.tank.capacity | Type))
+
+# Panel함수 이용
+plot.regression = function(x,y) { panel.xyplot(x,y)+ panel.lmline(x,y, col=2) }
+with(Cars93, xyplot(MPG.highway ~ Fuel.tank.capacity | Type, panel=plot.regression ))
+
+#cloud
+cloud(Sepal.Length ~ Petal.Length * Petal.Width | Species, data = iris,
+      screen = list(x = -90, y = 70), distance = .4, zoom = .6 )
+
+#splom
+super.sym <- trellis.par.get("superpose.symbol")
+splom(~iris[1:4], groups = Species, data = iris,
+      panel = panel.superpose,
+      key = list(title = "Three Varieties of Iris",
+                 columns = 3, 
+                 points = list(pch = super.sym$pch[1:3],
+                               col = super.sym$col[1:3]),
+                 text = list(c("Setosa", "Versicolor", "Virginica"))))
+
+# Scatterplot matrices; 패키지 "car"에 있는 함수
+library(car)
+scatterplotMatrix(iris[,1:4],smooth=FALSE)
